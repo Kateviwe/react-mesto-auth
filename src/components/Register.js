@@ -5,7 +5,8 @@ import * as auth from '../utils/auth.js';
 function Register({
     onRegister,
     rejectRegisteredIn,
-    handleRegisterFormClick
+    handleRegisterFormClick,
+    setIsRegisteringNow
 }) {
 
     //Добавим управляемые компоненты (элементы формы), связав их со стейт-переменными email и password
@@ -20,7 +21,6 @@ function Register({
 
     //Валидация всей формы на основе данных valid с инпутов
     const [isFormValid, setIsFormValid] = React.useState(false);
-
     const history = useHistory();
 
     // Обработчики изменения инпутов обновляют стейты
@@ -41,21 +41,29 @@ function Register({
         e.preventDefault();
         auth.register(email, password)
         .then((res) => {
+            setIsRegisteringNow(true);
             if(res) {
                 onRegister();
+                setIsRegisteringNow(false);
+                handleRegisterFormClick();
                 history.push('/sign-in');
             }
             else {
                 rejectRegisteredIn();
             }
         })
-        .finally(handleRegisterFormClick());
+        .catch((err) => {
+            setIsRegisteringNow(false);
+            rejectRegisteredIn();
+            handleRegisterFormClick();
+            console.log(err);
+        });
     }
 
     //Валидация всей формы на основе данных valid с инпутов
     React.useEffect(() => {
         (isEmailValid && isPasswordValid && email !== '' && password !== '') ? setIsFormValid(true) : setIsFormValid(false);
-    }, [isEmailValid, isPasswordValid]);
+    }, [isEmailValid, isPasswordValid, email, password]);
 
     React.useEffect(() => {
         setIsFormValid(false);

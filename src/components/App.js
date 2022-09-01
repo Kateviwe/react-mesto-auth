@@ -33,7 +33,7 @@ function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-    const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
+    const [isTooltipPopupOpen, setIsTooltipPopupOpen] = React.useState(false);
     
     //Стейт-переменная, отвечающая за просматриваемую карточку
     const [selectedCard, setSelectedCard] = React.useState(null);
@@ -47,6 +47,9 @@ function App() {
     const [loggedIn, setLoggedIn] = React.useState(false);
     //Создадим стейт-переменную, отвечающую за успешную/неуспешную регистрацию текущего пользователя
     const [registeredIn, setRegisteredIn] = React.useState(false);
+    //Создадим стейт-переменную, отвечающую меняет ли свое состояние registeredIn в данный момент
+    const [isRegisteringNow, setIsRegisteringNow] = React.useState(false);
+    //Создадим стейт-переменную, отвечающую за загрузку данных на попапе прежде, чем он откроется
     const [currentEmail, setCurrentEmail] = React.useState('');
     const history = useHistory();
 
@@ -118,15 +121,15 @@ function App() {
         setIsEditAvatarPopupOpen(true);
     }
 
-    function handleRegisterFormClick() {
-        setIsRegisterPopupOpen(true);
+    function handleFormClick() {
+        setIsTooltipPopupOpen(true);  
     }
     
     function closeAllPopups() {
         setIsEditProfilePopupOpen(false);
         setIsAddPlacePopupOpen(false);
         setIsEditAvatarPopupOpen(false);
-        setIsRegisterPopupOpen(false);
+        setIsTooltipPopupOpen(false);
         setSelectedCard(null);
     }
 
@@ -140,7 +143,7 @@ function App() {
                 setCurrentUser(newData);
                 closeAllPopups();
             })
-            .catch((err) => console.log(err))
+            .catch((err) => console.log(err));
     }
 
     function handleUpdateAvatar(data) {
@@ -148,7 +151,7 @@ function App() {
             .then((newData) => {
                 setCurrentUser(newData);
             })
-            .catch((err) => console.log(err))
+            .catch((err) => console.log(err));
     }
 
     function handleAddPlaceSubmit(cardObject) {
@@ -157,7 +160,7 @@ function App() {
                 setCards([newCardObject, ...cards]);
                 closeAllPopups();
             })
-            .catch((err) => console.log(err))
+            .catch((err) => console.log(err));
     }
 
     function checkToken() {
@@ -172,12 +175,13 @@ function App() {
                     history.push('/');
                 }
             })
+            .catch((err) => console.log(err));
         }
     }
 
     React.useEffect(() => {
         checkToken();
-    }, []); 
+    }, []);
 
     function getRegisteredIn() {
         setRegisteredIn(true);
@@ -209,15 +213,17 @@ function App() {
                     <Switch>
                         <Route path="/sign-in">
                             <Login
-                                loggedIn = {loggedIn}
                                 onLogin = {handleLoggedIn}
+                                handleAuthFormClick={handleFormClick}
+                                rejectRegisteredIn={rejectRegisteredIn}
                             />
                         </Route>
                         <Route path="/sign-up">
                             <Register
                                 onRegister={getRegisteredIn}
                                 rejectRegisteredIn={rejectRegisteredIn}
-                                handleRegisterFormClick={handleRegisterFormClick}
+                                handleRegisterFormClick={handleFormClick}
+                                setIsRegisteringNow={setIsRegisteringNow}
                             />
                         </Route>
                         <ProtectedRoute exact path="/"
@@ -237,9 +243,10 @@ function App() {
                     </Switch>
                     <Footer />
                     <InfoTooltip
-                        isOpen={isRegisterPopupOpen}
+                        isOpen={isTooltipPopupOpen}
                         onClose={closeAllPopups}
                         registeredIn={registeredIn}
+                        isRegisteringNow={isRegisteringNow}
                     />
                     <EditProfilePopup
                         isOpen={isEditProfilePopupOpen}

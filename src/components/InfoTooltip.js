@@ -4,7 +4,8 @@ import iconRegisteredError from '../images/popup-image-tooltip-error.svg';
 function InfoTooltip({
   isOpen,
   onClose,
-  registeredIn
+  registeredIn,
+  isRegisteringNow
 }) {
 
   const textRegisteredOk = 'Вы успешно зарегистрировались!';
@@ -12,7 +13,7 @@ function InfoTooltip({
 
   return (
 
-    <div className={`popup ${isOpen && 'popup_opened'}`}>
+    <div className={`popup ${(isOpen && !isRegisteringNow) && 'popup_opened'}`}>
         <div className="popup__container">
             <button className="popup__exit" type="button" onClick={onClose}></button>
             {registeredIn

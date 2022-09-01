@@ -7,6 +7,22 @@ function Header({
 }) {
 
     const path = useLocation();
+    const renderAuthLink = () => {
+        if (path.pathname === '/sign-up') {
+            return (
+                <Link to='/sign-in' className="header__link">
+                    Войти
+                </Link>
+            );
+        }
+        if (path.pathname === '/sign-in') {
+            return (
+                <Link to='/sign-up' className="header__link">
+                    Регистрация
+                </Link>
+            );
+        }
+    };
 
     if(path.pathname !== '/' && path.pathname !== '/sign-up' && path.pathname !== '/sign-in') {
         return null;
@@ -17,18 +33,19 @@ function Header({
                 <div className="header__container">
                     {loggedIn && (<h2 className="header__email">{email}</h2>)}
                     {loggedIn && (path.pathname === '/' &&
-                        <Link to='/sign-in'
+                        <Link
+                            to='/sign-in'
                             className="header__link">
                             <button
                                 type='button'
                                 className="header__button"
-                                onClick={onSignOut}>Выйти
+                                onClick={onSignOut}
+                            >
+                                Выйти
                             </button>
-                        </Link>)}
-                    {!loggedIn &&
-                        (path.pathname === '/sign-up' && <Link to='/sign-in' className="header__link">Войти</Link>)
-                        || (path.pathname === '/sign-in' && <Link to='/sign-up' className="header__link">Регистрация</Link>)
-                    }
+                        </Link>
+                    )}
+                    {!loggedIn && renderAuthLink()}
                 </div>
             </header>
         );

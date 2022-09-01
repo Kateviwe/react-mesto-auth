@@ -1,9 +1,10 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import * as auth from '../utils/auth.js';
 
 function Login({
-    onLogin
+    onLogin,
+    handleAuthFormClick,
+    rejectRegisteredIn
 }) {
 
     //Добавим управляемые компоненты (элементы формы), связав их со стейт-переменными email и password
@@ -18,8 +19,6 @@ function Login({
 
     //Валидация всей формы на основе данных valid с инпутов
     const [isFormValid, setIsFormValid] = React.useState(false);
-
-    const history = useHistory();
 
     // Обработчики изменения инпутов обновляют стейты
     function handleEmailChange(e) {
@@ -39,18 +38,28 @@ function Login({
         e.preventDefault();
         auth.authorize(email, password)
         .then((res) => {
-            if(res) {
-                onLogin();
-                history.push('/');
+            //По факту проверяем зарегистрирован ли такой пользователь
+            if(res.token){
+                localStorage.setItem('token', res.token);
+                return res;
             }
         })
-        .catch((err) => console.log(err));
+        .then((res) => {
+            if(res) {
+                onLogin();
+            }
+        })
+        .catch((err) => {
+            rejectRegisteredIn();
+            handleAuthFormClick();
+            console.log(err);
+        });
     }
 
     //Валидация всей формы на основе данных valid с инпутов
     React.useEffect(() => {
         (isEmailValid && isPasswordValid && email !== '' && password !== '') ? setIsFormValid(true) : setIsFormValid(false);
-    }, [isEmailValid, isPasswordValid]);
+    }, [isEmailValid, isPasswordValid, email, password]);
 
     React.useEffect(() => {
         setIsFormValid(false);

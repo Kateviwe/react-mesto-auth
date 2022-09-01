@@ -19,11 +19,7 @@ export const register = (email, password) => {
             password
         })
     })
-    .then(checkResponse)
-    .then((res) => {
-        return res;
-    })
-    .catch((err) => console.log(err));
+    .then(checkResponse);
 };
 
 export const authorize = (email, password) => {
@@ -37,15 +33,7 @@ export const authorize = (email, password) => {
             password
         })
     })
-    .then(checkResponse)
-    .then((res) => {
-        //По факту проверяем зарегистрирован ли такой пользователь
-        if (res.token){
-            localStorage.setItem('token', res.token);
-            return res;
-        }
-    })
-    .catch((err) => console.log(err));
+    .then(checkResponse);
 };
 
 export const getContentFromToken = (token) => {
@@ -56,6 +44,5 @@ export const getContentFromToken = (token) => {
             'Authorization': `Bearer ${token}`
         }
     })
-    .then(checkResponse)
-    .catch((err) => console.log(err));
+    .then(checkResponse);
 };
