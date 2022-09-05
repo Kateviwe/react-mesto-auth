@@ -2,8 +2,8 @@
 
 ## Данный проект представляет собой сервис, в котором можно делиться фотографиями, удалять их и ставить лайки. Реализована регистрация и авторизация на сайте.
 
-<img width=650px src=./react-mesto-auth-registration_readme-file.png/>
-<img width= 650px src=./react-mesto-auth_readme-file.png/>
+<img width=850px src=./react-mesto-auth-registration_readme-file.png/>
+<img width= 850px src=./react-mesto-auth_readme-file.png/>
 
 __Стек технологий проекта:__
 * React
